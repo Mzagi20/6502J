@@ -5,8 +5,8 @@ public interface NotificationCenterListener {
     ///////////////////////////////////////////////////////////////////////////
     // IMPL.
     ///////////////////////////////////////////////////////////////////////////
-    void registerAsListener();
-    void sendMessage(String msg);
+    void registerAsListener(String _id);
+    void sendMessage(String _id, String msg);
     void receiveMessage(String msg);
 
 
