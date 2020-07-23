@@ -76,6 +76,107 @@ public class CPU implements NotificationCenterListener {
     ///////////////////////////////////////////////////////////////////////////
     // ADDRESSING MODES
     ///////////////////////////////////////////////////////////////////////////
+    public int IMP() {
+        fetched = regA;
+        return 0;
+    }
+
+    public int IMM() {
+        addr_abs = pc++;
+        return 0;
+    }
+
+    public int ZP0() {
+        addr_abs = read(pc);
+        pc++;
+        addr_abs &= 0x00FF;
+        return 0;
+    }
+
+    public int ZPX() {
+        addr_abs = (read(pc) + regX);
+        pc++;
+        addr_abs &= 0x00FF;
+        return 0;
+    }
+
+    public int ZPY() {
+        addr_abs = (read(pc) + regY);
+        pc++;
+        addr_abs &= 0x00FF;
+        return 0;
+    }
+
+    public int REL() {
+        addr_rel = read(pc);
+        pc++;
+        if ((addr_rel & 0x80) == (1 << 7)) {
+            addr_rel |= 0xFF00;
+        }
+        return 0;
+    }
+
+    public int ABS() {
+        int lo = read(pc);
+        pc++;
+        int hi = read(pc);
+        pc++;
+        addr_abs = (hi << 8) | lo;
+        return 0;
+    }
+
+    public int ABX() {
+        int lo = read(pc);
+        pc++;
+        int hi = read(pc);
+        pc++;
+        addr_abs = (hi << 8) | lo;
+        addr_abs += regX;
+        return ((addr_abs & 0xFF00) != (hi << 8)) ? 1 : 0;
+    }
+
+    public int ABY() {
+        int lo = read(pc);
+        pc++;
+        int hi = read(pc);
+        pc++;
+        addr_abs = (hi << 8) | lo;
+        addr_abs += regY;
+        return ((addr_abs & 0xFF00) != (hi << 8)) ? 1 : 0;
+    }
+
+    public int  IND() {
+        int lo_ptr = read(pc);
+        pc++;
+        int hi_ptr = read(pc);
+        pc++;
+        int ptr = (hi_ptr << 8) | lo_ptr;
+        if (lo_ptr == 0x00FF) {
+            addr_abs = (read(ptr & 0xFF00) << 8) | read(ptr + 0);
+        } else {
+            addr_abs = (read(ptr +1) << 8) | read(ptr + 0);
+        }
+        return 0;
+    }
+
+    public int IZX() {
+        int orig = read(pc);
+        pc++;
+        int lo = read((orig + regX) & 0x00FF);
+        int hi = read((orig + regX + 0x1) & 0x00FF);
+        addr_abs = (hi << 8) | lo;
+        return 0;
+    }
+
+    public int IZY() {
+        int orig = read(pc);
+        pc++;
+        int lo = read(orig & 0x00FF);
+        int hi = read((orig + 0x1) & 0x00FF);
+        addr_abs = (hi << 8) | lo;
+        addr_abs += regY;
+        return ((addr_abs & 0xFF00) != (hi << 8)) ? 1 : 0;
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////
