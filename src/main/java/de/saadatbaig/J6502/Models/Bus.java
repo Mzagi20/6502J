@@ -30,7 +30,7 @@ public class Bus implements NotificationCenterListener {
     // FUNCTIONS
     ///////////////////////////////////////////////////////////////////////////
     public int read(int addr) {
-        if (addr > 0x0 && addr <= 0xFFFF) {
+        if (addr >= 0x0 && addr <= 0xFFFF) {
             addr &= 0xFFFF;
             return (ram[addr] & 0xFF);
         } else {
@@ -39,7 +39,7 @@ public class Bus implements NotificationCenterListener {
     }
 
     public void write(int addr, int data) {
-        if ((addr > 0x0 && addr <= 0xFFFF) && (data >= 0x0 && data <= 0xFF)) {
+        if ((addr >= 0x0 && addr <= 0xFFFF) && (data >= 0x0 && data <= 0xFF)) {
             addr &= 0xFFFF;
             data &= 0xFF;
             ram[addr] = data;
